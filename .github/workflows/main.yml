@@ -17,3 +17,14 @@ jobs:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
       COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+  cd:
+    needs: ci
+    uses: paulocesar-prog/linuxtips-cicd-reusable/.github/workflows/pipeline-cd.yaml@main
+    with:
+      working-directory: app
+      aws-region: us-east-1
+      deploy-type: ${{ vars.TYPE }}
+    secrets:
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      COSIGN_KEY_PUB: ${{ secrets.COSIGN_KEY_PUB }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
