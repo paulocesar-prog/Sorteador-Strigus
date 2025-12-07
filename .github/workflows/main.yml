@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   ci:
-    uses: paulocesar-prog/linuxtips-cicd-reusable/.github/workflows/pipeline-cd.yaml@main
+    uses: paulocesar-prog/linuxtips-cicd-reusable/.github/workflows/pipeline-ci.yaml@main
     with:
       working-directory: app
       aws-region: us-east-1
