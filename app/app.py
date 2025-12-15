@@ -43,6 +43,26 @@ def after_request(response):
 def metrics():
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
+@app.route('/healthz')
+def healthz():
+    """Liveness probe - verifica se a aplicação está viva"""
+    try:
+        redis_client.ping()
+        return jsonify({'status': 'healthy'}), 200
+    except Exception as e:
+        return jsonify({'status': 'unhealthy', 'error': str(e)}), 503
+
+@app.route('/readyz')
+def readyz():
+    """Readiness probe - verifica se a aplicação está pronta para receber tráfego"""
+    try:
+        redis_client.ping()
+        if not os.path.exists(UPLOAD_FOLDER):
+            return jsonify({'status': 'not ready', 'error': 'Upload folder not found'}), 503
+        return jsonify({'status': 'ready'}), 200
+    except Exception as e:
+        return jsonify({'status': 'not ready', 'error': str(e)}), 503
+
 @app.route('/')
 def index():
     return render_template('index.html')
