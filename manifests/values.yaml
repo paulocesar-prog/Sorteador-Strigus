@@ -1,0 +1,50 @@
+image: 760337697893.dkr.ecr.us-east-1.amazonaws.com/linuxtips/sorteador-strigus:d32ffc03ce870cf367ea061780c94bc61bab40fc
+
+replicaCount: 2
+
+container:
+  name: "sorteador"
+  port: 5000
+  imagePullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+probes:
+  startup:
+    enabled: true
+    path: /healthz
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 30
+  readiness:
+    path: /readyz
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 6
+    successThreshold: 1
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+
+service:
+  name: sorteador-service
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+labels:
+  app: sorteador
+
+istio:
+  enabled: true
+  host: "sorteador.grupobamaq.com.br"
