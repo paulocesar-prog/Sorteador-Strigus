@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sorteador-deployment
+  namespace: ${NAMESPACE}
+  labels:
+    app: sorteador
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: sorteador
+  template:
+    metadata:
+      labels:
+        app: sorteador
+    spec:
+      containers:
+        - name: sorteador
+          image: ${IMAGE}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
